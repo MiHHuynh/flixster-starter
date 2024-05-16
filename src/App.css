@@ -12,7 +12,43 @@
   padding: 20px;
 }
 
+.movie-card {
+  margin: .3em;
+  padding: 1em;
+  border: 1px solid #777777;
+  border-radius: 5px;
+}
+
+.movie-card:hover {
+  cursor: pointer;
+}
+
+.movies {
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.load-more-button {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: .5em;
+}
+
+
+@media (max-width: 850px) {
+  .movies {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 600px) {
+  .movies {
+    grid-template-columns: 1fr;
+  }
+
   .movie-card {
     width: 100%;
   }
