@@ -17,3 +17,14 @@ button:hover {
   background-color: #777;
   color: white;
 }
+
+footer {
+  height: 4em;
+  background-color: #282c34;
+  color: white;
+  padding: 3em;
+}
+
+a {
+  color: lightblue
+}

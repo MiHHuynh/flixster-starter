@@ -8,6 +8,7 @@ import Search from "./components/Search";
 import SortDropdown from "./components/SortDropdown";
 import LoadMoreButton from "./components/LoadMoreButton";
 import useFetchMovies from "./hooks/useFetchMovies";
+import Footer from "./components/Footer";
 
 const App = () => {
   const [pageState, setPageState] = useState("Now Playing");
@@ -82,6 +83,7 @@ const App = () => {
           <LoadMoreButton handleClick={handleLoadMoreClick} />
         </>
       }
+      <Footer />
     </div>
   );
 };
