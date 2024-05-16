@@ -1,12 +1,11 @@
 import { useState } from 'react'
 // import './App.css'
 
-const Search = () => {
+const Search = ({ searchQuery, handleSearchChange }) => {
     return (
-        <div>
-            <input type='text' />
-            <button>Search</button>
-        </div>
+        <>
+            <input className="search-input" type="text" value={searchQuery} onChange={handleSearchChange} placeholder="Search" />
+        </>
     )
 }
 

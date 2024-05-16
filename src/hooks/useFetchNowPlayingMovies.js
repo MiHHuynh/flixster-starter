@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const useFetchMovies = (url) => {
+const useFetchNowPlayingMovies = (url) => {
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -31,4 +31,4 @@ const useFetchMovies = (url) => {
     return { data, isLoading, error };
 };
 
-export default useFetchMovies;
+export default useFetchNowPlayingMovies;
