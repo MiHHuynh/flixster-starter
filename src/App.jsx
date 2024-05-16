@@ -5,26 +5,28 @@ import MovieCard from "./components/MovieCard";
 import Search from "./components/Search";
 import SortDropdown from "./components/SortDropdown";
 import LoadMoreButton from "./components/LoadMoreButton";
+import useFetchMovies from "./hooks/useFetchMovies";
 
 const App = () => {
   const [movies, setMovies] = useState([]);
-  const url = 'https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1';
+  const [currentPage, setCurrentPage] = useState(1);
+  const url = `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${currentPage}`;
+  const { data, isLoading, error } = useFetchMovies(url);
+
   useEffect(() => {
-    fetch(url, {
-      method: "GET",
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_API_READ_ACCESS_TOKEN}`
-      },
-    })
-      .then(res => res.json())
-      .then(json => {
-        console.log(json);
-        console.log("json.results", json?.results);
-        setMovies(json?.results);
-      })
-      .catch(err => console.error('error:' + err));
-  }, []);
+    if (data && data.results) {
+      // Concatenate new movies to the existing movies state
+      setMovies((prevMovies) => [...prevMovies, ...data.results]);
+    }
+  }, [data]);
+
+  const handleLoadMoreClick = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  if (isLoading) return (<p>Loading...</p>);
+
+  if (error) return (<p>Oops! Something went wrong.</p>);
 
   return (
     <div className="App">
@@ -42,7 +44,7 @@ const App = () => {
           })
         }
       </section>
-      <LoadMoreButton handleClick={() => {}} />
+      <LoadMoreButton handleClick={handleLoadMoreClick} />
     </div>
   );
 };
