@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const useFetchNowPlayingMovies = (url) => {
+const useFetchMovies = (url) => {
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -16,6 +16,7 @@ const useFetchNowPlayingMovies = (url) => {
                     throw new Error('Network response was not ok.');
                 }
                 const result = await response.json();
+
                 setData(result);
                 setIsLoading(false);
                 console.log(result);
@@ -31,4 +32,4 @@ const useFetchNowPlayingMovies = (url) => {
     return { data, isLoading, error };
 };
 
-export default useFetchNowPlayingMovies;
+export default useFetchMovies;
