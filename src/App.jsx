@@ -9,6 +9,7 @@ import SortDropdown from "./components/SortDropdown";
 import LoadMoreButton from "./components/LoadMoreButton";
 import useFetchMovies from "./hooks/useFetchMovies";
 import Footer from "./components/Footer";
+import Modal from "./components/Modal";
 
 const App = () => {
   const [pageState, setPageState] = useState("Now Playing");
@@ -16,6 +17,9 @@ const App = () => {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [requestUrl, setRequestUrl] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [movieGenres, setMovieGenres] = useState();
 
   useEffect(() => {
     if (pageState === "Now Playing") {
@@ -34,6 +38,20 @@ const App = () => {
       setMovies((prevMovies) => [...prevMovies, ...data.results]);
     }
   }, [data]);
+
+  useEffect(() => {
+    //Fetch Genres
+    const genresUrl = 'https://api.themoviedb.org/3/genre/movie/list?language=en';
+    fetch(genresUrl, {
+      method: "GET",
+      headers: { accept: 'application/json', Authorization: `Bearer ${import.meta.env.VITE_API_READ_ACCESS_TOKEN}` }
+    })
+      .then(res => res.json())
+      .then(json => {
+        console.log(json)
+        setMovieGenres(json);
+      })
+  }, []);
 
   const handleLoadMoreClick = () => {
     setCurrentPage((prevPage) => prevPage + 1);
@@ -56,6 +74,30 @@ const App = () => {
     setSearchQuery(value);
   };
 
+  const handleClickMovieCard = (movie) => {
+    console.log("open modal")
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  let selectedMovieGenres;
+  if (selectedMovie) {
+    console.log("***selectedmovie", selectedMovie);
+    selectedMovieGenres = movieGenres?.genres.map((genre) => {
+      if (selectedMovie?.genre_ids.indexOf(genre.id) !== -1) {
+        console.log(genre.name)
+        return genre.name;
+      }
+    })
+  }
+
+  console.log(movieGenres);
+  console.log("selectedmovie genre ids", selectedMovie?.genre_ids)
+
   if (isLoading) return (<p>Loading...</p>);
 
   return (
@@ -66,6 +108,30 @@ const App = () => {
         <button onClick={handlePageStateClick}>Search</button>
         <SortDropdown />
       </header>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        {/* Pass the selectedMovie to the Modal component */}
+        {selectedMovie && (
+          <div className="modal-content">
+            <h2>{selectedMovie.title}</h2>
+            <h3>Overview: {selectedMovie.overview}</h3>
+            <p>Release Date: {selectedMovie.release_date}</p>
+            <p>
+              <ul>
+                {
+                  selectedMovieGenres?.map((genre, id) => {
+                    if (genre) {
+                      return (
+                        <li key={id}>{genre}</li>
+                      );
+                    }
+                  })
+                }
+              </ul>
+            </p>
+            <img src={`https://image.tmdb.org/t/p/w200/${selectedMovie.poster_path}`} />
+          </div>
+        )}
+      </Modal>
       {
         (pageState == "Search") && <Search handleSearchChange={handleSearchChange} />
       }
@@ -75,7 +141,7 @@ const App = () => {
             {
               movies.map((movie) => {
                 return (
-                  <MovieCard key={movie.id} movie={movie} />
+                  <MovieCard key={movie.id} movie={movie} onClick={() => handleClickMovieCard(movie)} />
                 );
               })
             }
