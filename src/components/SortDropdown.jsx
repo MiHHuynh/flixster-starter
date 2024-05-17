@@ -1,13 +1,13 @@
-import { useState } from 'react'
-// import './App.css'
-
-const SortDropdown = () => {
+const SortDropdown = ({onChange}) => {
+    // popularity
+    // release_date
+    // vote_average
     return (
-        <select name="sortby" id="sortby">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
+        <select name="sortby" id="sortby" onChange={onChange}>
+            <option>Sort By</option>
+            <option value="popularity">Popularity Descending</option>
+            <option value="release_date">Release Date Descending</option>
+            <option value="vote_average">Rating Descending</option>
         </select>
     )
 }

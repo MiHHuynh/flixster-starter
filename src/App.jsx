@@ -20,6 +20,7 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [movieGenres, setMovieGenres] = useState();
+  const [sortBy, setSortBy] = useState(null);
 
   useEffect(() => {
     if (pageState === "Now Playing") {
@@ -48,7 +49,6 @@ const App = () => {
     })
       .then(res => res.json())
       .then(json => {
-        console.log(json)
         setMovieGenres(json);
       })
   }, []);
@@ -75,7 +75,6 @@ const App = () => {
   };
 
   const handleClickMovieCard = (movie) => {
-    console.log("open modal")
     setSelectedMovie(movie);
     setIsModalOpen(true);
   };
@@ -86,17 +85,35 @@ const App = () => {
 
   let selectedMovieGenres;
   if (selectedMovie) {
-    console.log("***selectedmovie", selectedMovie);
     selectedMovieGenres = movieGenres?.genres.map((genre) => {
       if (selectedMovie?.genre_ids.indexOf(genre.id) !== -1) {
-        console.log(genre.name)
         return genre.name;
       }
     })
   }
 
-  console.log(movieGenres);
-  console.log("selectedmovie genre ids", selectedMovie?.genre_ids)
+  const handleSortByChange = (e) => {
+    setSortBy(e.target.value);
+  };
+
+  useEffect(() => {
+    if (sortBy && movies) {
+      let sortedMovies = [...movies];
+      if (sortBy === "popularity") {
+        sortedMovies.sort((movie1, movie2) => movie2.popularity - movie1.popularity);
+      } else if (sortBy === "release_date") {
+        sortedMovies.sort((movie1, movie2) => {
+          // Convert release_date strings to Date objects for comparison
+          const date1 = new Date(movie1.release_date);
+          const date2 = new Date(movie2.release_date);
+          return date2 - date1; // Sort in descending order by release date
+        });
+      } else if (sortBy === "vote_average") {
+        sortedMovies.sort((movie1, movie2) => movie2.vote_average - movie1.vote_average);
+      }
+      setMovies(sortedMovies);
+    }
+  }, [sortBy, movies]);
 
   if (isLoading) return (<p>Loading...</p>);
 
@@ -106,7 +123,7 @@ const App = () => {
         <h1>Flixster</h1>
         <button onClick={handlePageStateClick}>Now Playing</button>
         <button onClick={handlePageStateClick}>Search</button>
-        <SortDropdown />
+        <SortDropdown onChange={handleSortByChange} />
       </header>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {/* Pass the selectedMovie to the Modal component */}
